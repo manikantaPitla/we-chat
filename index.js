@@ -17,25 +17,26 @@ const io = require("socket.io")(server, {
 io.on("connection", (socket) => {
   console.log(`user connected : ${socket.id}`);
 
-  socket.on("messenger", (msg) => {
-    io.emit("messenger", msg);
-  });
+  socket.on("joinRoom", ({ room, name }) => {
+    socket.join(room);
 
-  socket.on("userConnect", (username) => {
-    console.log(`${username} connected`);
-    io.emit("userJoined", `${username} has joined`);
-  });
+    socket.emit("userConnected", `Welcome to we chat ${name}`);
+    socket.broadcast
+      .to(room)
+      .emit("userConnected", `${name} has joined the chat`);
 
-  socket.on("userDisconnect", (username) => {
-    console.log(`${username} disconnected`);
+    socket.on("messenger", (msg) => {
+      io.to(room).emit("messenger", msg);
+    });
   });
 
   socket.on("disconnect", () => {
+    socket.broadcast.emit("userDisconnected", "A user has left the chat");
     console.log("A user disconnected");
   });
 });
 
-const PORT = 3030;
+const PORT = 3010;
 
 server.listen(PORT, () => {
   console.log(`Server Running on http://localhost:${PORT}`);
