@@ -20,10 +20,18 @@ io.on("connection", (socket) => {
   socket.on("joinRoom", ({ room, name }) => {
     socket.join(room);
 
-    socket.emit("userConnected", `Welcome to we chat ${name}`);
-    socket.broadcast
-      .to(room)
-      .emit("userConnected", `${name} has joined the chat`);
+    socket.emit("userConnected", {
+      sender: "server",
+      message: `Welcome to the chat ${name}`,
+      time: null,
+      avatar: null,
+    });
+    socket.broadcast.to(room).emit("userConnected", {
+      sender: "server",
+      message: `${name} joined the chat`,
+      time: null,
+      avatar: null,
+    });
 
     socket.on("messenger", (msg) => {
       io.to(room).emit("messenger", msg);
