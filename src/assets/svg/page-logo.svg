@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="375pt" height="375pt" viewBox="0 0 375 375">
+<defs>
+<clipPath id="clip_0">
+<path transform="matrix(.24,0,0,.24,0,0)" d="M0 0H1562.5V1562.5H0Z" fill-rule="evenodd"/>
+</clipPath>
+<clipPath id="clip_1">
+<path transform="matrix(.24,0,0,.24,0,0)" d="M0 0H1562.5V1562.5H0Z" fill-rule="evenodd"/>
+</clipPath>
+<clipPath id="clip_2">
+<path transform="matrix(.24,0,0,.24,0,0)" d="M369.3334 382.0654H1194.3334V1178.9404H369.3334Z" fill-rule="evenodd"/>
+</clipPath>
+</defs>
+<g clip-path="url(#clip_0)">
+<path transform="matrix(.75,0,0,.75,0,0)" d="M0 0H500V500H0Z" fill="#ffffff"/>
+</g>
+<g clip-path="url(#clip_1)">
+<path transform="matrix(.75,0,0,.75,0,0)" d="M0 0H500V500H0Z" fill="#ffffff"/>
+</g>
+<g clip-path="url(#clip_2)">
+<path transform="matrix(.68088689,0,0,.68088689,88.88654,91.695697)" d="M289.66 60.65V108.51C289.66 132.67 275.54 153.53 255.1 163.28V119.33C255.1 80.380008 223.40001 48.68 184.44 48.68H60.66C55.44 48.68 50.35 49.25 45.45 50.33 50.34 21.75 75.24 0 105.22 0H229C262.5 0 289.66 27.15 289.66 60.65Z" fill="#4345ba"/>
+<path transform="matrix(.68088689,0,0,.68088689,88.88654,91.695697)" d="M184.44 58.68H60.65C27.16 58.68 0 85.84 0 119.33V167.19C0 200.69 27.16 227.84 60.65 227.84H66.01V281.38999L73.69 273.71C103.060009 244.34 142.9 227.84 184.43 227.84 217.93 227.84 245.07999 200.68 245.07999 167.19V119.33C245.09 85.84 217.94 58.68 184.44 58.68Z" fill="#2655b1"/>
+</g>
+</svg>

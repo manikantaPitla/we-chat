@@ -1,24 +1,74 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import Auth from "./pages/Auth";
+import Home from "./pages/Home";
+import SignIn from "./pages/SignIn";
+import SignUp from "./pages/SignUp";
+import PageNotFound from "./pages/PageNotFound";
+import ChatBox from "./components/ChatBox";
+import ProtectedRoute from "./components/ProtectedRoute";
+import UnProtectedRoute from "./components/UnProtectedRoute";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useSelector } from "react-redux";
 
 function App() {
+  const pageTheme = useSelector((state) => state.theme);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <div
+        className={pageTheme.theme === "LIGHT" ? "light-theme" : "dark-theme"}
+      >
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <Home />
+              </ProtectedRoute>
+            }
+          ></Route>
+          <Route
+            path="chats/:chatId"
+            element={
+              <ProtectedRoute>
+                <ChatBox />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/auth"
+            element={
+              <UnProtectedRoute>
+                <Auth />
+              </UnProtectedRoute>
+            }
+          />
+          <Route
+            path="/signin"
+            element={
+              <UnProtectedRoute>
+                <SignIn />
+              </UnProtectedRoute>
+            }
+          />
+          <Route
+            path="/signup"
+            element={
+              <UnProtectedRoute>
+                <SignUp />
+              </UnProtectedRoute>
+            }
+          />
+          <Route path="*" element={<PageNotFound />} />
+        </Routes>
+        <ToastContainer limit={0} />
+        <div id="popup-root"></div>
+      </div>
+    </BrowserRouter>
   );
 }
 
