@@ -9,6 +9,7 @@ export const MainContainer = styled.div`
   @media screen and (max-width: 768px) {
     height: 100vh;
     padding: 10px;
+
     background-color: var(--secondary-light);
   }
 `;
@@ -20,6 +21,13 @@ export const Header = styled.header`
   border-radius: var(--radius);
   background-color: var(--secondary);
   color: var(--text-primary);
+
+  /* position: sticky;
+  width: inherit;
+  width: 100%;
+  align-self: stretch;
+  z-index: 1;
+  top: 0; */
 
   display: flex;
   justify-content: space-between;
@@ -33,6 +41,7 @@ export const Header = styled.header`
       width: 50px;
       height: 50px;
       border-radius: 50px;
+      object-fit: cover;
     }
 
     h1 {
@@ -110,6 +119,7 @@ export const HeaderMenu = styled.div`
     border-radius: var(--radius);
     width: 150px;
     padding: 10px;
+    animation: animateView 0.2s;
 
     ul {
       list-style: none;
@@ -195,6 +205,7 @@ export const PreviewPopup = styled(Popup)`
 `;
 
 export const MediaPopContainer = styled.div`
+  animation: animateView 0.4s;
   display: flex;
   flex-direction: column;
   align-items: center;

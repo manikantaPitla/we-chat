@@ -55,6 +55,7 @@ function AddNewChat({ closeModal }) {
       setUserAddStatus(null);
       closeModal();
     } catch (error) {
+      console.log(error);
       setUserAddStatus(null);
       toastError("Error: ", error.message);
     }

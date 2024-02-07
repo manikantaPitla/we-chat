@@ -12,7 +12,7 @@ import {
   PreviewPopup,
   MediaPopContainer,
 } from "./styledComponent";
-import { PageLoader } from "../../utils/componentUtils";
+import { PageLoader, handleErrImage } from "../../utils/componentUtils";
 import { useSelector, useDispatch } from "react-redux";
 
 import chatWaitingImg from "../../assets/svg/chat-waiting.svg";
@@ -103,7 +103,12 @@ function ChatBox() {
         <DefaultPage>
           <div></div>
           <div className="mid-container">
-            <img src={chatWaitingImg} alt="chat-waiting" loading="lazy" />
+            <img
+              src={chatWaitingImg}
+              alt="chat-waiting"
+              loading="lazy"
+              onError={handleErrImage}
+            />
             <p>
               Hey {currentUser.displayName} !, Lets get ready to chat with our
               loved one's .
@@ -143,7 +148,9 @@ function ChatBox() {
                       trigger={
                         <img
                           src={chatUser?.photoURL}
+                          loading="lazy"
                           alt={chatUser?.displayName}
+                          onError={handleErrImage}
                         />
                       }
                     >
@@ -155,6 +162,7 @@ function ChatBox() {
                             </button>
                           </div>
                           <img
+                            loading="lazy"
                             src={chatUser?.photoURL}
                             alt={chatUser?.displayName}
                           />

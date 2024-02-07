@@ -181,11 +181,6 @@ export const getUser = async (userId) => {
   }
 };
 export const setUserToChats = async (currentUser, user) => {
-  //   const combinedId =
-  //     currentUser.uid > user.uid
-  //       ? currentUser.uid + user.uid
-  //       : user.uid + currentUser.uid;
-
   const combinedId = generateCombineId(currentUser.uid, user.uid);
 
   const response = await getDoc(doc(db, "chats", combinedId));
@@ -215,7 +210,6 @@ export const setUserToChats = async (currentUser, user) => {
 };
 
 const updateUserChatList = async (combinedId, currentUserId, dataToUpdate) => {
-  console.log("DATA : ", { combinedId, currentUserId, dataToUpdate });
   try {
     await updateDoc(doc(db, "userChats", currentUserId), {
       [combinedId + ".userInfo"]: dataToUpdate,
@@ -301,126 +295,50 @@ export const uploadMedia = async (mediaFile, chatId, progressCallback) => {
   });
 };
 
-export const sendMessageWithImage = async (
-  currentUser,
-  chatId,
-  message,
-  imageLink
-) => {
-  await updateDoc(doc(db, "chats", chatId), {
-    messages: arrayUnion({
-      id: nanoid(),
-      text: message,
-      senderId: currentUser,
-      time: Timestamp.now(),
-      image: imageLink,
-    }),
-  });
-};
-
 export const convertToTimestamp = (milliSeconds) => {
   return Timestamp.fromMillis(milliSeconds);
 };
 
 export const convertToTime = (timeStamp) => {
   return timeStamp.toMillis();
-  //   return timeStamp;
 };
 
-export const sendMessage = async (
-  dispatch,
-  currentUserId,
-  chatId,
-  messageData
-) => {
-  //   const newMessage = {
-  //     id: nanoid(),
-  //     senderId: currentUserId,
-  //     time: Timestamp.now(),
-  //     ...messageData,
-  //   };
-
+export const sendMessage = async (chatId, messageData) => {
   const newMessage = messageData;
 
-  //   const messageStatus = {
-  //     ...newMessage,
-  //     time: Timestamp.now().toMillis(),
-  //     status: "sending",
-  //   };
-
   try {
-    // dispatch(addMessage(messageStatus));
-
     await updateDoc(doc(db, "chats", chatId), {
       messages: arrayUnion(newMessage),
     });
-
-    // dispatch(updateMessage({ ...messageStatus, status: "sent" }));
   } catch (error) {
     console.log("ERROR: ", error);
-    // dispatch(
-    //   updateMessage({
-    //     ...messageStatus,
-    //     status: "failed",
-    //   })
-    // );
   }
 };
-
-// export const sendMessage = async (
-//   dispatch,
-//   currentUserId,
-//   chatId,
-//   messageData
-// ) => {
-//   const newMessage = {
-//     id: nanoid(),
-//     senderId: currentUserId,
-//     time: Timestamp.now(),
-//     ...messageData,
-//   };
-
-//   //   const newMessage = messageData;
-
-//   const messageStatus = {
-//     ...newMessage,
-//     time: Timestamp.now().toMillis(),
-//     status: "sending",
-//   };
-
-//   try {
-//     dispatch(addMessage(messageStatus));
-
-//     await updateDoc(doc(db, "chats", chatId), {
-//       messages: arrayUnion(newMessage),
-//     });
-
-//     dispatch(updateMessage({ ...messageStatus, status: "sent" }));
-//   } catch (error) {
-//     console.log("ERROR: ", error);
-//     dispatch(
-//       updateMessage({
-//         ...messageStatus,
-//         status: "failed",
-//       })
-//     );
-//   }
-// };
 
 export const handleSendMessage = async (
   media,
   setFileUploadingStatus,
   dispatch,
   currentUserId,
-  currentChatId
+  currentChatId,
+  currentChatUser
 ) => {
-  const { imageFile, videoFile, message } = media;
+  const { imageFile, videoFile, audioFile, message } = media;
 
   const newMessage = {
     id: nanoid(),
     senderId: currentUserId,
     message,
     time: Timestamp.now(),
+  };
+
+  const updateLastMessageStatus = async (updatedMessage) => {
+    await updateLastMessage(
+      currentUserId,
+      currentChatUser,
+      currentChatId,
+      updatedMessage
+    );
   };
 
   const messageStatus = {
@@ -443,7 +361,7 @@ export const handleSendMessage = async (
         }
       );
 
-      await sendMessage(dispatch, currentUserId, currentChatId, {
+      await sendMessage(currentChatId, {
         ...newMessage,
         image: mediaLink,
       });
@@ -451,13 +369,18 @@ export const handleSendMessage = async (
       dispatch(
         updateMessage({ ...messageStatus, image: mediaLink, status: "sent" })
       );
-      console.log("SENDING IMAGE FILE");
+      //   console.log("SENDING IMAGE FILE");
+
+      updateLastMessageStatus("📷Image");
     }
 
     if (videoFile) {
-      const videoSrc = await getFileSrc(videoFile);
-
-      dispatch(addMessage({ ...messageStatus, video: videoFile }));
+      dispatch(
+        addMessage({
+          ...messageStatus,
+          videoData: { video: videoFile, name: videoFile.name },
+        })
+      );
 
       const mediaLink = await uploadMedia(
         videoFile,
@@ -467,21 +390,60 @@ export const handleSendMessage = async (
         }
       );
 
-      await sendMessage(dispatch, currentUserId, currentChatId, {
+      await sendMessage(currentChatId, {
         ...newMessage,
-        video: mediaLink,
+        videoData: { video: mediaLink, name: videoFile.name },
       });
 
       dispatch(
-        updateMessage({ ...messageStatus, video: mediaLink, status: "sent" })
+        updateMessage({
+          ...messageStatus,
+          videoData: { video: mediaLink, name: videoFile.name },
+          status: "sent",
+        })
       );
-      console.log("SENDING VIDEO FILE");
+      //   console.log("SENDING VIDEO FILE");
+      updateLastMessageStatus("📹 video");
     }
 
-    if (!videoFile && !imageFile && message) {
+    if (audioFile) {
+      dispatch(
+        addMessage({
+          ...messageStatus,
+          audioData: { audio: audioFile, name: audioFile.name },
+        })
+      );
+
+      const mediaLink = await uploadMedia(
+        audioFile,
+        currentChatId,
+        (uploadingStatus) => {
+          setFileUploadingStatus(uploadingStatus + "%");
+        }
+      );
+
+      //   console.log("CLOUD AUDIO FILE:", mediaLink);
+      await sendMessage(currentChatId, {
+        ...newMessage,
+        audioData: { audio: mediaLink, name: audioFile.name },
+      });
+
+      dispatch(
+        updateMessage({
+          ...messageStatus,
+          message: "",
+          audioData: { audio: mediaLink, name: audioFile.name },
+          status: "sent",
+        })
+      );
+      //   console.log("SENDING AUDIO FILE");
+      updateLastMessageStatus("🎵 audio");
+    }
+
+    if (!videoFile && !imageFile && !audioFile && message) {
       dispatch(addMessage({ ...messageStatus }));
 
-      await sendMessage(dispatch, currentUserId, currentChatId, {
+      await sendMessage(currentChatId, {
         ...newMessage,
       });
 
@@ -491,7 +453,8 @@ export const handleSendMessage = async (
           status: "sent",
         })
       );
-      console.log("SENDING TEXT MESSAGE");
+      //   console.log("SENDING TEXT MESSAGE");
+      updateLastMessageStatus(message);
     }
   } catch (error) {
     dispatch(
@@ -556,7 +519,8 @@ export const deleteMessage = async (chatId, messageId, currentUserId) => {
 
         if ("message" in updatedMessage) updatedMessage.message = "";
         if ("image" in updatedMessage) updatedMessage.image = null;
-        if ("video" in updatedMessage) updatedMessage.video = null;
+        if ("videoData" in updatedMessage) updatedMessage.videoData = null;
+        if ("audioData" in updatedMessage) updatedMessage.audioData = null;
 
         return updatedMessage;
       } else {

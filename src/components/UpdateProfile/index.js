@@ -14,7 +14,7 @@ import {
   uploadProfileImage,
 } from "../../utils/firebaseUtils";
 
-import { PageLoader } from "../../utils/componentUtils";
+import { PageLoader, handleErrImage } from "../../utils/componentUtils";
 
 import {
   MainContainer,
@@ -140,7 +140,12 @@ function UpdateProfile({ closeModal }) {
             )}
             <ProfileImgContainer>
               <div>
-                <img src={profileImg} alt="profile" />
+                <img
+                  src={profileImg}
+                  alt="profile"
+                  onError={handleErrImage}
+                  loading="lazy"
+                />
                 {imgUploadingStatus && (
                   <p>
                     <span>{imgUploadingStatus}</span>

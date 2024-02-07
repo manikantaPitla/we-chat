@@ -62,3 +62,12 @@ a {
   background-color: rgba(0, 0, 0, 0.14);
   border-radius: 4px;
 }
+
+@keyframes animateView {
+  from {
+    scale: 0;
+  }
+  to {
+    scale: 1;
+  }
+}

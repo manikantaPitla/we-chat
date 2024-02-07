@@ -1,5 +1,27 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
+
+import { IoClose } from "react-icons/io5";
+import { Send2, Trash } from "iconsax-react";
+import emptyChat from "../../assets/svg/empty-chat.svg";
+
+import {
+  getUserMessages,
+  deleteMessage,
+  convertToTimestamp,
+  updateLastMessage,
+} from "../../utils/firebaseUtils";
+
+import {
+  PageLoader,
+  getTime,
+  handleErrImage,
+} from "../../utils/componentUtils";
+import { useWindowWidth } from "../../context/widthContext";
+
+import AudioFile from "../AudioFile";
+import VideoPlayer from "../VideoPlayer";
 import {
   MainContainer,
   MediaFile,
@@ -9,23 +31,8 @@ import {
   MediaPopContainer,
   PreviewPopup,
 } from "./styledComponent";
-import {
-  getUserMessages,
-  deleteMessage,
-  convertToTimestamp,
-} from "../../utils/firebaseUtils";
-import { PageLoader, getTime } from "../../utils/componentUtils";
-import { useWindowWidth } from "../../context/widthContext";
 
-import { Trash } from "iconsax-react";
-import { IoClose } from "react-icons/io5";
-import { Send2 } from "iconsax-react";
-
-import ReactPlayer from "react-player";
-import { useParams } from "react-router-dom";
-import emptyChat from "../../assets/svg/empty-chat.svg";
-
-function ChatBody({ chatUser }) {
+function ChatBody() {
   const [messageList, setMessageList] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -38,19 +45,7 @@ function ChatBody({ chatUser }) {
   const urlChatId = params?.chatId;
   const dispatch = useDispatch();
   const chatContainerScroll = useRef();
-  const messageScroll = useRef();
-
-  //   useEffect(() => {
-  //     if (chatContainerScroll.current) {
-  //       chatContainerScroll.current.scrollTop =
-  //         chatContainerScroll.current.scrollHeight;
-  //         chatContainerScroll.current.scrollIntoView({ behavior: "smooth" });
-  //     }
-  //   }, [messageList]);
-
-  useEffect(() => {
-    messageScroll.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messageList]);
+  const messageScrollRef = useRef();
 
   const chatId = windowWidth > 768 ? currentChat?.chatId : urlChatId;
 
@@ -76,15 +71,88 @@ function ChatBody({ chatUser }) {
     }
   }, [messageDataList]);
 
+  useEffect(() => {
+    if (chatContainerScroll.current) {
+      chatContainerScroll.current.scrollTop =
+        chatContainerScroll.current.scrollHeight;
+    }
+  }, [messageList]);
+
   const handleDeleteMessage = async (messageId, closeModal) => {
     try {
       await deleteMessage(chatId, messageId, currentUser.uid);
+      await updateLastMessage(
+        currentUser.uid,
+        currentChat.user,
+        chatId,
+        "Message deleted"
+      );
       closeModal();
     } catch (error) {
       console.error(error.message);
       closeModal();
     }
   };
+
+  const RenderImageMessage = ({ image, message }) => (
+    <MediaFile>
+      <PreviewPopup
+        modal
+        trigger={
+          <img src={image} alt="file" loading="lazy" onError={handleErrImage} />
+        }
+      >
+        {(close) => (
+          <MediaPopContainer>
+            <div>
+              <button onClick={close}>
+                <IoClose />
+              </button>
+            </div>
+            <img
+              className="preview-image"
+              src={image}
+              alt="file"
+              loading="lazy"
+              onError={handleErrImage}
+            />
+          </MediaPopContainer>
+        )}
+      </PreviewPopup>
+      <p>{message}</p>
+    </MediaFile>
+  );
+
+  const RenderVideoMessage = ({ video, message }) => (
+    <MediaFile>
+      {/* <ReactPlayer width="200px" light controls url={video.video} /> */}
+      <VideoPlayer video={video.video} />
+      <p>{message}</p>
+    </MediaFile>
+  );
+
+  const RenderTextMessage = ({ eachMessage, message }) => (
+    <p
+      style={{
+        fontStyle: eachMessage?.deletedBy ? "italic" : "normal",
+
+        color: eachMessage?.deletedBy && "var(--text-secondary)",
+        fontWeight: eachMessage?.deleted && 400,
+      }}
+    >
+      {message !== ""
+        ? message
+        : eachMessage?.deletedBy === currentUser.uid
+        ? "You deleted this message"
+        : "This message was deleted"}
+    </p>
+  );
+
+  const RenderAudioMessage = ({ audioData }) => (
+    <MediaFile>
+      <AudioFile audioData={audioData} />
+    </MediaFile>
+  );
 
   return (
     <MainContainer ref={chatContainerScroll}>
@@ -95,14 +163,19 @@ function ChatBody({ chatUser }) {
           {messageDataList.length > 0 ? (
             <>
               {messageDataList.map((eachMessage) => {
-                const { id, message, time, senderId, image, video } =
-                  eachMessage;
+                const {
+                  id,
+                  message,
+                  time,
+                  senderId,
+                  image,
+                  videoData,
+                  audioData,
+                } = eachMessage;
 
-                console.log(eachMessage);
-                // console.log(eachMessage);
                 return (
                   <li
-                    ref={messageScroll}
+                    ref={messageScrollRef}
                     key={id}
                     className={
                       senderId === currentUser.uid
@@ -113,62 +186,25 @@ function ChatBody({ chatUser }) {
                     <div>
                       <div className="text-item">
                         {image && (
-                          <MediaFile>
-                            <PreviewPopup
-                              modal
-                              trigger={
-                                <img src={image} alt="file" loading="lazy" />
-                              }
-                            >
-                              {(close) => (
-                                <MediaPopContainer>
-                                  <div>
-                                    <button onClick={close}>
-                                      <IoClose />
-                                    </button>
-                                  </div>
-                                  <img
-                                    className="preview-image"
-                                    src={image}
-                                    alt="file"
-                                    loading="lazy"
-                                  />
-                                </MediaPopContainer>
-                              )}
-                            </PreviewPopup>
-                            <p>{message}</p>
-                          </MediaFile>
+                          <RenderImageMessage image={image} message={message} />
                         )}
-                        {video && (
-                          <MediaFile>
-                            <ReactPlayer
-                              width="200px"
-                              light
-                              controls
-                              url={video}
-                            />
-                            <p>{message}</p>
-                          </MediaFile>
+                        {videoData && (
+                          <RenderVideoMessage
+                            video={videoData}
+                            message={message}
+                          />
                         )}
-                        {!image && !video && (
-                          <p
-                            style={{
-                              fontStyle: eachMessage?.deletedBy
-                                ? "italic"
-                                : "normal",
-
-                              color:
-                                eachMessage?.deletedBy &&
-                                "var(--text-secondary)",
-                              fontWeight: eachMessage?.deleted && 400,
-                            }}
-                          >
-                            {message !== ""
-                              ? message
-                              : eachMessage?.deletedBy === currentUser.uid
-                              ? "You deleted this message"
-                              : "This message was deleted"}
-                          </p>
+                        {audioData && (
+                          <RenderAudioMessage
+                            audioData={audioData}
+                            message={message}
+                          />
+                        )}
+                        {!image && !videoData && !audioData && (
+                          <RenderTextMessage
+                            eachMessage={eachMessage}
+                            message={message}
+                          />
                         )}
                       </div>
                       {eachMessage?.status === "sending" && (
@@ -180,9 +216,11 @@ function ChatBody({ chatUser }) {
                       <StyledPopUp
                         modal
                         trigger={
-                          <button type="button" className="options">
-                            <Trash size={16} />
-                          </button>
+                          senderId === currentUser.uid && (
+                            <button type="button" className="options">
+                              <Trash size={16} />
+                            </button>
+                          )
                         }
                       >
                         {(close) => (

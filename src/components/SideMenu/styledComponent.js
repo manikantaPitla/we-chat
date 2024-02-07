@@ -13,6 +13,10 @@ export const MainContainer = styled.div`
 
   box-shadow: var(--shadow);
 
+  img {
+    cursor: pointer;
+  }
+
   @media screen and (max-width: 500px) {
     order: 1;
     flex-direction: row;
@@ -97,7 +101,6 @@ export const LogoutContainer = styled.div`
       outline: none;
 
       &:hover {
-        
       }
     }
 

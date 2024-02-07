@@ -17,6 +17,7 @@ import {
   getTime,
   PageLoader,
   resizeLastMessage,
+  handleErrImage,
 } from "../../utils/componentUtils";
 import { useSelector, useDispatch } from "react-redux";
 import { setCurrentChat, clearCurrentChat } from "../../features/chatReducer";
@@ -53,6 +54,7 @@ function SideBar() {
   }, [currentUser]);
 
   useEffect(() => {
+    
     currentUser.uid && getChats();
   }, [currentUser, getChats]);
 
@@ -99,43 +101,55 @@ function SideBar() {
         ) : usersList.length !== 0 ? (
           <>
             {filteredUserList.length > 0 ? (
-              filteredUserList.map((user) => {
-                const { date, userInfo, lastMessage } = user[1];
-                const { uid, displayName, photoURL } = userInfo;
-                const time = getTime(date);
+              filteredUserList
+                .filter(
+                  (user) =>
+                    user[1].date !== null && user[1].date.seconds !== null
+                )
+                .sort((a, b) => b[1].date.seconds - a[1].date.seconds)
+                .map((user) => {
+                  const { date, userInfo, lastMessage } = user[1];
+                  const { uid, displayName, photoURL } = userInfo;
 
-                return (
-                  <li
-                    key={uid}
-                    onClick={() => {
-                      if (windowWidth > 768) {
-                        dispatch(clearCurrentChat());
-                        dispatch(
-                          setCurrentChat({ user: userInfo, currentUser })
-                        );
-                      } else {
-                        const combinedId = generateCombineId(
-                          currentUser.uid,
-                          uid
-                        );
+                  const time = getTime(date);
 
-                        navigate(`chats/${combinedId}?u_id=${uid}`);
-                      }
-                    }}
-                    className={`${uid === currentChat.uid ? "active" : ""}`}
-                  >
-                    <img src={photoURL} alt={displayName} />
-                    <div>
-                      <h1>{displayName}</h1>
-                      <p>
-                        {lastMessage?.text &&
-                          resizeLastMessage(lastMessage?.text)}
-                      </p>
-                    </div>
-                    <p>{time}</p>
-                  </li>
-                );
-              })
+                  return (
+                    <li
+                      key={uid}
+                      onClick={() => {
+                        if (windowWidth > 768) {
+                          dispatch(clearCurrentChat());
+                          dispatch(
+                            setCurrentChat({ user: userInfo, currentUser })
+                          );
+                        } else {
+                          const combinedId = generateCombineId(
+                            currentUser.uid,
+                            uid
+                          );
+
+                          navigate(`chats/${combinedId}?u_id=${uid}`);
+                        }
+                      }}
+                      className={`${uid === currentChat.uid ? "active" : ""}`}
+                    >
+                      <img
+                        src={photoURL}
+                        alt={displayName}
+                        onError={handleErrImage}
+                        loading="lazy"
+                      />
+                      <div>
+                        <h1>{displayName}</h1>
+                        <p>
+                          {lastMessage?.text &&
+                            resizeLastMessage(lastMessage?.text)}
+                        </p>
+                      </div>
+                      <p>{time}</p>
+                    </li>
+                  );
+                })
             ) : (
               <p
                 style={{

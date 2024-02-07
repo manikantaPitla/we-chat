@@ -1,11 +1,6 @@
 import styled from "styled-components";
 import Popup from "reactjs-popup";
 export const MainContainer = styled.form`
-  /* margin: 10px; */
-  /* border: var(--border); */
-  /* height: 70px; */
-  /* overflow: hidden; */
-
   height: 60px;
   display: flex;
   align-items: center;
@@ -14,7 +9,6 @@ export const MainContainer = styled.form`
   box-shadow: var(--shadow);
   border-radius: var(--radius);
   background-color: var(--secondary);
-  /* padding: 0px 10px; */
 
   input {
     background-color: transparent;
@@ -97,6 +91,7 @@ export const StyledPopUp = styled(Popup)`
 `;
 
 export const MediaPopContainer = styled.div`
+  animation: animateView 0.4s;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -155,6 +150,7 @@ export const Attachmentbutton = styled.div`
 `;
 
 export const AttachmentContainer = styled.div`
+  animation: animateView 0.3s;
   background-color: var(--secondary);
   border: var(--border);
   box-shadow: var(--shadow);

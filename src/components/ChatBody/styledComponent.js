@@ -25,6 +25,7 @@ export const MainContainer = styled.ul`
     width: fit-content;
     max-width: 75%;
     position: relative;
+    transition: all 40s ease-in;
 
     div {
       display: flex;
@@ -32,6 +33,7 @@ export const MainContainer = styled.ul`
       justify-content: flex-end;
 
       .options {
+        flex-shrink: 0;
         background-color: var(--primary);
         box-shadow: var(--boxShadow);
         border: none;
@@ -103,6 +105,7 @@ export const MainContainer = styled.ul`
     div {
       justify-content: flex-start;
     }
+
     .options {
       display: none !important;
     }
@@ -206,6 +209,7 @@ export const PreviewPopup = styled(Popup)`
 `;
 
 export const MediaPopContainer = styled.div`
+  animation: animateView 0.4s;
   display: flex;
   flex-direction: column;
   align-items: center;

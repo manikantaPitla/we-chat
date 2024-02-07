@@ -6,7 +6,7 @@ import {
   LogoutContainer,
   StyledPopUp,
 } from "./styledComponent";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import PageLogo from "../../assets/svg/page-logo.svg";
 import { Logout, Messages1, Moon, Sun1 } from "iconsax-react";
 import { signOutUser } from "../../firebase";
@@ -51,12 +51,20 @@ function SideMenu() {
     handleDarkMode();
   }, [pageTheme, dispatch]);
 
+  const clickLogo = () => {
+    dispatch(clearCurrentChat());
+  };
+
   return (
     <MainContainer>
       <div>
-        <Link to="/">
-          <img className="page-logo" src={PageLogo} alt="logo" />
-        </Link>
+        <img
+          className="page-logo"
+          src={PageLogo}
+          alt="logo"
+          loading="lazy"
+          onClick={clickLogo}
+        />
       </div>
       <MenuItemContainer>
         <MenuItem className="active">

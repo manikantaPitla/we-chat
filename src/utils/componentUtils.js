@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { toast } from "react-toastify";
 import { ring, dotPulse } from "ldrs";
+import errImage from "../assets/img/no-image.png";
 ring.register();
 dotPulse.register();
 
@@ -95,4 +96,9 @@ export const getFileSrc = (file) => {
 
     reader.readAsDataURL(file);
   });
+};
+
+export const handleErrImage = (e) => {
+  e.target.src = errImage;
+  e.target.alt = "Image not found";
 };
