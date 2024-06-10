@@ -1,14 +1,8 @@
-import React, {
-  useState,
-  //  useEffect
-} from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 import { FcGoogle } from "react-icons/fc";
-import {
-  //  getRedirectResult,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase";
 
 import pageLogo from "../../assets/svg/page-logo.svg";
@@ -40,35 +34,6 @@ function SignIn() {
   const [loadingMsg, setLoadingMsg] = useState("Loading...");
 
   const navigate = useNavigate();
-
-  //   useEffect(() => {
-  //     const handleRedirectResult = async () => {
-  //       try {
-  //         const result = await getRedirectResult(auth);
-  //         if (true) {
-  //           setLoadingMsg("Just a moment, we're getting you in!");
-  //           await handleUserIdentification(result.user);
-  //           setLoading(false);
-
-  //           setEmail("");
-  //           setPassword("");
-  //           navigate("/");
-  //         } else {
-  //           setLoading(false);
-  //         }
-  //       } catch (error) {
-  //         setLoading(false);
-  //         console.error(error);
-  //         toastError("Something went wrong");
-  //       }
-  //       setLoadingMsg("");
-  //     };
-  //     handleRedirectResult();
-
-  //     return () => {
-  //       handleRedirectResult();
-  //     };
-  // }, [navigate]);
 
   const handleGoogleLogin = async () => {
     setLoading(true);

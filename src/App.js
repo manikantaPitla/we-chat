@@ -1,3 +1,4 @@
+import React from "react";
 import "./App.css";
 import Auth from "./pages/Auth";
 import Home from "./pages/Home";
@@ -8,7 +9,6 @@ import ChatBox from "./components/ChatBox";
 import ProtectedRoute from "./components/ProtectedRoute";
 import UnProtectedRoute from "./components/UnProtectedRoute";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useSelector } from "react-redux";

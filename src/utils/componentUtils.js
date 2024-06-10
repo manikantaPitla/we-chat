@@ -74,6 +74,24 @@ export const getTime = (date) => {
   }
 };
 
+export const getDate = (milliseconds) => {
+  const date = new Date(milliseconds);
+
+  // Get day, month, and year
+  const day = date.getDate();
+  const month = date.toLocaleString("default", { month: "short" });
+
+  let hours = date.getHours();
+  let minutes = date.getMinutes();
+
+  const ampm = hours >= 12 ? "PM" : "AM";
+  hours %= 12;
+  hours = hours || 12;
+
+  minutes = minutes < 10 ? "0" + minutes : minutes;
+  return `last seen on ${day} ${month} ${hours}:${minutes} ${ampm}`;
+};
+
 export const resizeLastMessage = (message) => {
   if (message.length > 15) {
     return message.substring(0, 15) + " ...";

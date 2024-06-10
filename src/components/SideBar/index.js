@@ -54,12 +54,13 @@ function SideBar() {
   }, [currentUser]);
 
   useEffect(() => {
-    
     currentUser.uid && getChats();
   }, [currentUser, getChats]);
 
   const filteredUserList = Object.entries(usersList).filter((eachUser) => {
-    return eachUser[1].userInfo.displayName.includes(searchUser);
+    return eachUser[1].userInfo.displayName
+      .toLowerCase()
+      .includes(searchUser.toLowerCase());
   });
 
   return (
@@ -131,7 +132,7 @@ function SideBar() {
                           navigate(`chats/${combinedId}?u_id=${uid}`);
                         }
                       }}
-                      className={`${uid === currentChat.uid ? "active" : ""}`}
+                      className={`${uid === currentChat?.uid ? "active" : ""}`}
                     >
                       <img
                         src={photoURL}

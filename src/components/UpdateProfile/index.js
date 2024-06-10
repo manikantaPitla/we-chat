@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from "react";
 import defaultUser from "../../assets/img/default-user.png";
 import { useSelector } from "react-redux";
 import {
@@ -97,19 +96,16 @@ function UpdateProfile({ closeModal }) {
         user.displayName !== displayName &&
         (profileImg === defaultUser || profileImg === user?.photoURL)
       ) {
-        // console.log("updating name");
         await updateUserName(displayName);
       } else if (
         user.displayName === displayName &&
         (profileImg !== defaultUser || profileImg !== user?.photoURL)
       ) {
-        // console.log("updating image");
         await updateUserProfile(profileUploadedUrl);
       } else if (
         user.displayName !== displayName &&
         (profileImg !== defaultUser || profileImg !== profile?.photoURL)
       ) {
-        // console.log("updating name and image");
         await updateUserNameAndProfile(displayName, profileUploadedUrl);
       }
 

@@ -7,6 +7,8 @@ import ChatBox from "../../components/ChatBox";
 
 import { useSelector } from "react-redux";
 import { useWindowWidth } from "../../context/widthContext";
+import { setUserOnlineStatus } from "../../utils/firebaseUtils";
+
 import { MainContainer, StyledPopUp, FlexColumn } from "./styledComponent";
 import "reactjs-popup/dist/index.css";
 
@@ -22,6 +24,46 @@ function Home() {
       setModalVisible(true);
     }
   }, [user]);
+
+  //   useEffect(() => {
+  //     console.log("LOADING HOME");
+  //     setUserOnlineStatus(user.uid, true);
+
+  //     const handleWindowClose = () => {
+  //       setUserOnlineStatus(user.uid, false);
+  //     };
+
+  //     window.addEventListener("unload", handleWindowClose);
+
+  //     return () => {
+  //       console.log("UNLOADING HOME");
+  //       setUserOnlineStatus(user.uid, false);
+  //       window.removeEventListener("unload", handleWindowClose);
+  //     };
+  //   }, [user.uid]);
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "hidden") {
+        setUserOnlineStatus(user.uid, false);
+      } else {
+        setUserOnlineStatus(user.uid, true);
+      }
+    };
+
+    const handleWindowClose = () => {
+      setUserOnlineStatus(user.uid, false);
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("load", setUserOnlineStatus(user.uid, true));
+    window.addEventListener("beforeunload", handleWindowClose);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.addEventListener("beforeunload", handleWindowClose);
+    };
+  }, [user.uid]);
 
   return (
     <MainContainer>

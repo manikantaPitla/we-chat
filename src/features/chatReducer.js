@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  user: {},
+  user: null,
   chatId: null,
 };
 
@@ -22,7 +22,7 @@ const chatReducer = createSlice({
     },
 
     clearCurrentChat: (state) => {
-      state.user = {};
+      state.user = null;
       state.chatId = null;
     },
   },

@@ -1,6 +1,28 @@
 import React, { useState, useEffect } from "react";
 import ChatBody from "../ChatBody";
 import ChatInput from "../ChatInput";
+
+import {
+  PageLoader,
+  handleErrImage,
+  getDate,
+} from "../../utils/componentUtils";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  setUserOnlineStatus,
+  getAccuratetUser,
+} from "../../utils/firebaseUtils";
+
+import chatWaitingImg from "../../assets/svg/chat-waiting.svg";
+import { FaGithub, FaLinkedin } from "react-icons/fa";
+import { HiDotsVertical } from "react-icons/hi";
+import { IoClose } from "react-icons/io5";
+
+import { clearChat, updateLastMessage } from "../../utils/firebaseUtils";
+import { useWindowWidth } from "../../context/widthContext";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { clearCurrentChat } from "../../features/chatReducer";
+
 import {
   MainContainer,
   Header,
@@ -12,28 +34,12 @@ import {
   PreviewPopup,
   MediaPopContainer,
 } from "./styledComponent";
-import { PageLoader, handleErrImage } from "../../utils/componentUtils";
-import { useSelector, useDispatch } from "react-redux";
-
-import chatWaitingImg from "../../assets/svg/chat-waiting.svg";
-import { FaGithub, FaLinkedin } from "react-icons/fa";
-import { HiDotsVertical } from "react-icons/hi";
-import { IoClose } from "react-icons/io5";
-
-import {
-  clearChat,
-  updateLastMessage,
-  getUser,
-} from "../../utils/firebaseUtils";
-import { useWindowWidth } from "../../context/widthContext";
-import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-
-import { clearCurrentChat } from "../../features/chatReducer";
 
 function ChatBox() {
   const currentUser = useSelector((state) => state.auth.user);
   const currentChat = useSelector((state) => state.chat);
   const { user, chatId } = currentChat;
+
   const [isModalOpen, setModalOpen] = useState(false);
   const [chatUser, setChatUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -52,38 +58,75 @@ function ChatBox() {
 
   useEffect(() => {
     dispatch(clearCurrentChat());
-
     return () => {
       dispatch(clearCurrentChat());
     };
   }, [dispatch]);
 
   useEffect(() => {
-    if (windowWidth > 768 && Object.keys(user).length === 0) {
+    if (windowWidth > 768) {
       navigate("/");
       return;
     }
+  }, [windowWidth, navigate]);
+
+  useEffect(() => {
+    const getChatUser = async (chatUserId) => {
+      try {
+        const unsubscribe = getAccuratetUser(
+          chatUserId,
+          setChatUser,
+          setLoading
+        );
+        return () => unsubscribe();
+      } catch (error) {
+        console.log(error.message);
+        setLoading(false);
+      }
+    };
 
     if (windowWidth <= 768) {
-      const getChatUser = async () => {
-        try {
-          const userData = await getUser(userId);
-          setChatUser(userData);
-          setLoading(false);
-        } catch (error) {
-          console.log(error.message);
-          setLoading(false);
+      getChatUser(userId);
+    } else {
+      if (user) {
+        getChatUser(user.uid);
+      }
+    }
+
+    //eslint-disable-next-line
+  }, [user, userId]);
+
+  useEffect(() => {
+    if (windowWidth <= 768) {
+      const handleVisibilityChange = () => {
+        if (document.visibilityState === "hidden") {
+          setUserOnlineStatus(currentUser.uid, false);
+        } else {
+          setUserOnlineStatus(currentUser.uid, true);
         }
       };
 
-      getChatUser();
-    } else {
-      setLoading(false);
-      if (user) {
-        setChatUser(user);
-      }
+      const handleWindowClose = () => {
+        setUserOnlineStatus(currentUser.uid, false);
+      };
+
+      document.addEventListener("visibilitychange", handleVisibilityChange);
+      window.addEventListener(
+        "load",
+        setUserOnlineStatus(currentUser.uid, true)
+      );
+      window.addEventListener("beforeunload", handleWindowClose);
+
+      return () => {
+        window.addEventListener("beforeunload", handleWindowClose);
+        document.removeEventListener(
+          "visibilitychange",
+          handleVisibilityChange
+        );
+      };
     }
-  }, [windowWidth, navigate, userId, user]);
+    // eslint-disable-next-line
+  }, [currentUser.uid]);
 
   const handleClearChat = async () => {
     try {
@@ -172,6 +215,11 @@ function ChatBox() {
 
                     <div>
                       <h1>{chatUser?.displayName}</h1>
+                      <p>
+                        {chatUser?.online
+                          ? "Online"
+                          : getDate(chatUser?.lastSeen)}
+                      </p>
                     </div>
                   </div>
                   <HeaderMenu>

@@ -43,7 +43,6 @@ export const MainContainer = styled.ul`
         width: 30px;
         border-radius: 50px;
         svg {
-          /* color: var(--text-primary); */
           color: #fff;
           font-size: 16px;
         }
@@ -150,7 +149,6 @@ export const EmptyChat = styled.div`
 
 export const StyledPopUp = styled(Popup)`
   &-content {
-    /* margin: 0 0 !important; */
     width: 250px;
     height: 100px;
     border: none;
@@ -198,10 +196,6 @@ export const DeletePopUp = styled.div`
 
 export const PreviewPopup = styled(Popup)`
   &-content {
-    /* width: 250px;
-    height: 100px;
-    box-shadow: var(--shadow);
-    border-radius: var(--radius); */
     background-color: transparent;
     border: none;
     width: inherit;

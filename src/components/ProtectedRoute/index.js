@@ -18,7 +18,6 @@ function ProtectedRoute({ children }) {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         await handleUserIdentification(user);
-        // console.log(user)
         const userDocRef = doc(db, "users", user.uid);
 
         const unsubscribeUserDoc = onSnapshot(userDocRef, (docSnapshot) => {

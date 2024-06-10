@@ -125,7 +125,6 @@ function ChatBody() {
 
   const RenderVideoMessage = ({ video, message }) => (
     <MediaFile>
-      {/* <ReactPlayer width="200px" light controls url={video.video} /> */}
       <VideoPlayer video={video.video} />
       <p>{message}</p>
     </MediaFile>

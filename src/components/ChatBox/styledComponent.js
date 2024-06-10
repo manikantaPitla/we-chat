@@ -44,9 +44,21 @@ export const Header = styled.header`
       object-fit: cover;
     }
 
+    div {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
     h1 {
       font-size: 16px;
       font-weight: 500;
+    }
+
+    p {
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--primary);
     }
   }
 
