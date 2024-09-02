@@ -7,7 +7,7 @@ dotPulse.register();
 
 const toastSettings = {
   position: "top-right",
-  autoClose: 4000,
+  autoClose: 2500,
   hideProgressBar: true,
   closeOnClick: true,
   pauseOnHover: true,

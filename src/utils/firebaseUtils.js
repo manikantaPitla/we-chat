@@ -54,7 +54,11 @@ export const handleUserIdentification = async (user) => {
 };
 
 export const signInUsingRedirect = async () => {
-  await signInWithRedirect(auth, new GoogleAuthProvider());
+  try {
+    await signInWithRedirect(auth, new GoogleAuthProvider());
+  } catch (error) {
+    console.error(error.message);
+  }
 };
 
 export const setUserOnlineStatus = async (currentUserId, status) => {

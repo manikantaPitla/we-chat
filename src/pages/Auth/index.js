@@ -20,13 +20,13 @@ import {
 import { FcGoogle } from "react-icons/fc";
 
 import {
-  MainContainer,
-  LoginCard,
-  ButtonContainer,
-  Button,
-} from "./styledComponent";
-
-import pageLogo from "../../assets/svg/page-logo.svg";
+  ButtonLayout,
+  FlexColumnLayout,
+  FormCardLayout,
+  GoogleButtonLayout,
+  LogoLayout,
+  MainBgLayout,
+} from "../../utils/LayoutUtils";
 
 const Auth = () => {
   const [loading, setLoading] = useState(false);
@@ -67,34 +67,32 @@ const Auth = () => {
   };
 
   return (
-    <MainContainer>
+    <MainBgLayout>
       {loading ? (
         <PageLoader loadingMsg={loadingMsg} />
       ) : (
         <>
           <div></div>
-          <LoginCard>
-            <div>
-              <img className="page-logo" src={pageLogo} alt="Logo" />
-              <h1>We Chat</h1>
-            </div>
-            <ButtonContainer>
-              <Button onClick={handleGoogleLogin}>
+          <FormCardLayout as="div">
+            <LogoLayout>We Chat</LogoLayout>
+            <FlexColumnLayout>
+              <GoogleButtonLayout onClickButton={handleGoogleLogin}>
                 <FcGoogle />
                 <p>Sign In With Google</p>
-              </Button>
-              <Button
+              </GoogleButtonLayout>
+              <ButtonLayout
+                buttonType="button"
                 style={{ color: "#ffffff", backgroundColor: "var(--primary)" }}
               >
                 <Link to="/signin">
                   <p>Sign In With Email</p>
                 </Link>
-              </Button>
-            </ButtonContainer>
-          </LoginCard>
+              </ButtonLayout>
+            </FlexColumnLayout>
+          </FormCardLayout>
         </>
       )}
-    </MainContainer>
+    </MainBgLayout>
   );
 };
 

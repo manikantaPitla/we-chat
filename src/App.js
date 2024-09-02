@@ -12,6 +12,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useSelector } from "react-redux";
+import ForgotPassword from "./pages/ForgotPassword";
 
 function App() {
   const pageTheme = useSelector((state) => state.theme);
@@ -60,6 +61,14 @@ function App() {
             element={
               <UnProtectedRoute>
                 <SignUp />
+              </UnProtectedRoute>
+            }
+          />
+          <Route
+            path="/forgotpassword"
+            element={
+              <UnProtectedRoute>
+                <ForgotPassword />
               </UnProtectedRoute>
             }
           />

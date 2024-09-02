@@ -25,7 +25,7 @@ export const FlexColumn = styled.div`
   }
   @media screen and (max-width: 500px) {
     overflow-y: auto;
-    padding-bottom:2px ;
+    padding-bottom: 2px;
     flex: 1;
   }
 `;

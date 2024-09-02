@@ -1,21 +1,20 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
-import pageLogo from "../../assets/svg/page-logo.svg";
-import {
-  MainContainer,
-  FormContainer,
-  InputElement,
-  FlexColumn,
-  ButtonEl,
-  LinksContainer,
-  LogoContainer,
-} from "./styledComponent";
 
 import { toastError, DotLoader } from "../../utils/componentUtils";
 import { handleUserIdentification } from "../../utils/firebaseUtils";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "../../firebase";
+import {
+  MainBgLayout,
+  FormCardLayout,
+  LogoLayout,
+  InputLayout,
+  FlexColumnLayout,
+  ButtonLayout,
+  LinksLayout,
+} from "../../utils/LayoutUtils";
 
 function SignUp() {
   const [pwType, setPwType] = useState("password");
@@ -80,31 +79,28 @@ function SignUp() {
   };
 
   return (
-    <MainContainer>
+    <MainBgLayout>
       <div></div>
-      <FormContainer onSubmit={handleSubmit}>
-        <LogoContainer style={{ alignSelf: "center" }}>
-          <img className="page-logo" src={pageLogo} alt="Logo" />
-          <h1>Sign Up</h1>
-        </LogoContainer>
-        <FlexColumn>
-          <InputElement>
+      <FormCardLayout onSubmitForm={handleSubmit}>
+        <LogoLayout>Sign Up</LogoLayout>
+        <FlexColumnLayout>
+          <InputLayout>
             <input
               type="text"
               placeholder="Name"
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
-          </InputElement>
-          <InputElement>
+          </InputLayout>
+          <InputLayout>
             <input
               type="email"
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-          </InputElement>
-          <InputElement>
+          </InputLayout>
+          <InputLayout>
             <input
               type={pwType}
               placeholder="Password"
@@ -121,18 +117,18 @@ function SignUp() {
             >
               {pwType === "password" ? <IoEyeOutline /> : <IoEyeOffOutline />}
             </button>
-          </InputElement>
-        </FlexColumn>
-        <ButtonEl type="submit">
+          </InputLayout>
+        </FlexColumnLayout>
+        <ButtonLayout buttonType="submit">
           {loading ? <DotLoader /> : "Create Account"}
-        </ButtonEl>
-        <LinksContainer>
+        </ButtonLayout>
+        <LinksLayout>
           <p>
             Already have an account? <Link to="/signin">Sign in</Link>
           </p>
-        </LinksContainer>
-      </FormContainer>
-    </MainContainer>
+        </LinksLayout>
+      </FormCardLayout>
+    </MainBgLayout>
   );
 }
 
