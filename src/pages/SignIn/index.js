@@ -7,6 +7,7 @@ import { auth } from "../../firebase";
 import { PageLoader, toastError, DotLoader } from "../../utils/componentUtils";
 import {
   handleUserIdentification,
+  //   SignInUsingPopUp,
   signInUsingRedirect,
 } from "../../utils/firebaseUtils";
 
@@ -37,6 +38,7 @@ function SignIn() {
     setLoading(true);
     setLoadingMsg("Redirecting...");
     await signInUsingRedirect();
+    // await SignInUsingPopUp();
   };
 
   const handleSubmit = async (e) => {

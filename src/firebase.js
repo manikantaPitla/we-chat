@@ -5,11 +5,12 @@ import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_KEY,
-  authDomain: "we-chat-9beb7.firebaseapp.com",
-  projectId: "we-chat-9beb7",
-  storageBucket: "we-chat-9beb7.appspot.com",
-  messagingSenderId: "176167843330",
-  appId: "1:176167843330:web:8d5ec9a903b1d0d539991b",
+  authDomain: "we-chat-dev.firebaseapp.com",
+  projectId: "we-chat-dev",
+  storageBucket: "we-chat-dev.appspot.com",
+  messagingSenderId: "439711520823",
+  appId: "1:439711520823:web:2612defb266ac8285f87b2",
+  measurementId: "G-4SHZ13QX10",
 };
 
 export const app = initializeApp(firebaseConfig);

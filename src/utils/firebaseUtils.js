@@ -20,6 +20,7 @@ import {
   GoogleAuthProvider,
   onAuthStateChanged,
   updateProfile,
+  signInWithPopup,
 } from "firebase/auth";
 import { uploadBytesResumable, ref, getDownloadURL } from "firebase/storage";
 import { nanoid } from "@reduxjs/toolkit";
@@ -28,7 +29,7 @@ import {
   updateMessage,
   setMessages,
 } from "../features/messagesReducer";
-import { getFileSrc } from "./componentUtils";
+import { getFileSrc, toastError } from "./componentUtils";
 
 export const handleUserIdentification = async (user) => {
   const userData = {
@@ -58,6 +59,33 @@ export const signInUsingRedirect = async () => {
     await signInWithRedirect(auth, new GoogleAuthProvider());
   } catch (error) {
     console.error(error.message);
+
+    if (error.code === "auth/network-request-failed") {
+      toastError("Network error. Please check your connection and try again.");
+    } else if (error.code === "auth/popup-closed-by-user") {
+      toastError("Popup closed before completing the sign-in.");
+    } else if (error.code === "auth/cancelled-popup-request") {
+      toastError("Sign-in was canceled. Please try again.");
+    } else {
+      toastError("Google sign-in failed. Please try again.");
+    }
+  }
+};
+
+export const SignInUsingPopUp = async () => {
+  try {
+    await signInWithPopup(auth, new GoogleAuthProvider());
+  } catch (error) {
+    console.error(error.message);
+    if (error.code === "auth/network-request-failed") {
+      toastError("Network error. Please check your connection and try again.");
+    } else if (error.code === "auth/popup-closed-by-user") {
+      toastError("Popup closed before completing the sign-in.");
+    } else if (error.code === "auth/cancelled-popup-request") {
+      toastError("Sign-in was canceled. Please try again.");
+    } else {
+      toastError("Google sign-in failed. Please try again.");
+    }
   }
 };
 
